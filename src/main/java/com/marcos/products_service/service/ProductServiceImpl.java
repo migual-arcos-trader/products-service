@@ -3,17 +3,19 @@ package com.marcos.products_service.service;
 import com.marcos.products_service.dto.ProductDTO;
 import com.marcos.products_service.exception.ProductNotFoundException;
 import com.marcos.products_service.model.Product;
+import com.marcos.products_service.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    private final Map<Long, Product> productMap = new ConcurrentHashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
+    private final ProductRepository productRepository;
 
     public Product createProduct(ProductDTO productDTO) {
         Product product = Product.builder()
@@ -21,39 +23,38 @@ public class ProductServiceImpl implements ProductService {
                 .price(productDTO.getPrice())
                 .description(productDTO.getDescription())
                 .build();
-        long id = idGenerator.getAndIncrement();
-        product.setId(id);
-        productMap.put(id, product);
-        return product;
+        return productRepository.save(product);
     }
 
     public List<Product> getAllProducts() {
-        return new ArrayList<>(productMap.values());
+        return productRepository.findAll();
     }
 
     public Optional<Product> getProductById(Long id) {
-        return Optional.ofNullable(productMap.get(id));
+        return productRepository.findById(id);
     }
 
+    @Transactional
     @Override
     public Product updateProduct(Long id, ProductDTO productDTO) throws ProductNotFoundException {
-        return Optional.ofNullable(productMap.get(id))
-                .map(existing -> {
-                    Product updated = existing.toBuilder()
-                            .name(productDTO.getName())
-                            .price(productDTO.getPrice())
-                            .description(productDTO.getDescription())
-                            .build();
-                    productMap.put(id, updated);
-                    return updated;
-                })
+        Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
+
+        Product updated = existing.toBuilder()
+                .name(productDTO.getName())
+                .price(productDTO.getPrice())
+                .description(productDTO.getDescription())
+                .build();
+
+        return productRepository.save(updated);
     }
 
     @Override
     public void deleteProduct(Long id) throws ProductNotFoundException {
-        if (Objects.isNull(productMap.remove(id))) {
+        if (!productRepository.existsById(id)) {
             throw new ProductNotFoundException(id);
         }
+        productRepository.deleteById(id);
     }
+
 }

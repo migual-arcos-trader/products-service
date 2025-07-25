@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
+@Entity
+@Table(name = "products")
 @NoArgsConstructor
 @Builder(builderClassName = "ProductBuilder", toBuilder = true)
 @Data
-//@Entity
-@Table(name = "products")
 public class Product {
 
     @Id
@@ -50,4 +50,5 @@ public class Product {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }
