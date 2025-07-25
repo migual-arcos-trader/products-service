@@ -129,14 +129,14 @@ class ProductTest {
         String toStringOutput = product.toString();
 
         assertAll(
-                () -> assertTrue(toStringOutput.contains(id.toString()), "toString() debe incluir el ID"),
-                () -> assertTrue(toStringOutput.contains(name), "toString() debe incluir el nombre"),
-                () -> assertTrue(toStringOutput.contains(String.valueOf(price)), "toString() debe incluir el precio"),
+                () -> assertTrue(toStringOutput.contains(id.toString()), "toString() should to include the ID."),
+                () -> assertTrue(toStringOutput.contains(name), "toString() should to include the name."),
+                () -> assertTrue(toStringOutput.contains(String.valueOf(price)), "toString() should to include the price."),
                 () -> {
                     if (Objects.nonNull(description) && !description.isEmpty()) {
-                        assertTrue(toStringOutput.contains(description), "toString() debe incluir la descripción");
+                        assertTrue(toStringOutput.contains(description), "toString() should to include the description.");
                     } else {
-                        assertFalse(toStringOutput.contains("null"), "toString() debe incluir 'null' si la descripción es nula/vacía");
+                        assertFalse(toStringOutput.contains("null"), "toString() should to include 'null' if the description is null/empty.");
                     }
                 }
         );
