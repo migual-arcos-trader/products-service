@@ -52,4 +52,5 @@ public class RestExceptionHandler {
         return ResponseEntity.internalServerError()
                 .body(Map.of("errors", List.of(error)));
     }
+
 }

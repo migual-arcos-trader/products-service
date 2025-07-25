@@ -63,4 +63,5 @@ class ProductDTOTest {
         assertTrue(validator.validate(productDTOWithNullDescription).isEmpty());
         assertTrue(validator.validate(productDTOWithEmptyDescription).isEmpty());
     }
+
 }

@@ -24,4 +24,5 @@ public class ProductDTO {
         this.price = price;
         this.description = description;
     }
+
 }

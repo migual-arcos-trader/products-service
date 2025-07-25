@@ -96,4 +96,5 @@ class RestExceptionHandlerTest {
                 .asInstanceOf(MAP)
                 .containsEntry("title", "Internal Server Error");
     }
+
 }
