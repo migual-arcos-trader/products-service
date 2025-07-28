@@ -5,7 +5,7 @@ jobs:
   test-and-build:
     runs-on: ubuntu-latest
     services:
-      postgres:  # Configure PostgresSQL to Testcontainers
+      postgres:
         image: postgres:16-alpine
         env:
           POSTGRES_USER: test
@@ -13,7 +13,15 @@ jobs:
           POSTGRES_DB: testdb
         ports:
           - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
+      SPRING_DATASOURCE_USERNAME: test
+      SPRING_DATASOURCE_PASSWORD: test
 
     steps:
       # Step 1: Code Checkout
@@ -26,32 +34,38 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # Step 3: Dependency Cache of Maven (optional but recommend)
+      # Step 3: Wait for PostgreSQL
+      - name: Wait for PostgreSQL
+        run: sleep 10
+      - name: Run tests with Maven
+        run: mvn test
+
+      # Step 4: Dependency Cache of Maven (optional but recommend)
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
 
-      # Step 4: Test Execution
+      # Step 5: Test Execution
       - name: Run tests with Maven
         run: mvn test
 
-      # Step 5: Build JAR
+      # Step 6: Build JAR
       - name: Build with Maven
         run: mvn clean package -DskipTests
         
-      # Step 6: Verify Docker Hub Secrets
+      # Step 7: Verify Docker Hub Secrets
       - name: Verify Docker Hub Secrets
         run: |
           echo "Username: ${{ secrets.DOCKER_HUB_USERNAME }}"
           echo "Token length: ${#DOCKER_HUB_TOKEN}"
 
-      # Step 7: Build image Docker
+      # Step 8: Build image Docker
       - name: Build Docker image
         run: docker build -t products-service .
 
-      # Step 8: Public in Docker Hub (optional)
+      # Step 9: Public in Docker Hub (optional)
       - name: Login to Docker Hub
         if: github.ref == 'refs/heads/main'  # main branch
         uses: docker/login-action@v3
@@ -59,7 +73,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       
-      # Step 9: Public in Docker Hub (optional)
+      # Step 10: Public in Docker Hub (optional)
       - name: Push to Docker Hub
         if: github.ref == 'refs/heads/main'
         run: |
