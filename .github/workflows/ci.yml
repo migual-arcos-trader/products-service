@@ -57,7 +57,7 @@ jobs:
       - name: Verify Docker Hub Secrets
         run: |
           echo "Username: ${{ secrets.DOCKER_HUB_USERNAME }}"
-          echo "Token length: ${#secrets.DOCKER_HUB_TOKEN}"
+          echo "Token length: ${#DOCKER_HUB_TOKEN}"
 
       # Step 8: Build image Docker
       - name: Build Docker image
