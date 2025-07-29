@@ -1,5 +1,5 @@
 name: CI Pipeline
-on: [push, pull_request]  # Execute in pushes y PRs
+on: [ push, pull_request ]  # Execute in pushes y PRs
 
 jobs:
   test-and-build:
@@ -52,7 +52,7 @@ jobs:
       # Step 6: Build JAR
       - name: Build with Maven
         run: mvn clean package -DskipTests
-        
+
       # Step 7: Verify Docker Hub Secrets
       - name: Verify Docker Hub Secrets
         run: |

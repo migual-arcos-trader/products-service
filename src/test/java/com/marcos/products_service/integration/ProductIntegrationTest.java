@@ -11,8 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -27,6 +27,8 @@ public class ProductIntegrationTest {
             .withDatabaseName("testdb")
             .withUsername("test")
             .withPassword("test");
+    @Autowired
+    private ProductService productService;
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -42,9 +44,6 @@ public class ProductIntegrationTest {
     void containerShouldBeRunning() {
         assertThat(postgres.isRunning()).isTrue();
     }
-
-    @Autowired
-    private ProductService productService;
 
     @Test
     void shouldSaveAndRetrieveProduct() {
