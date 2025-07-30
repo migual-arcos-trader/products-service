@@ -16,6 +16,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long id;
 
     @Column(nullable = false)
@@ -27,7 +28,7 @@ public class Product {
     private String description;
 
     public Product(Long id, String name, double price, String description) {
-        if (name == null || name.trim().isEmpty()) {
+        if (Objects.isNull(name) || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Product name cannot be null or empty");
         }
         if (price <= 0) {

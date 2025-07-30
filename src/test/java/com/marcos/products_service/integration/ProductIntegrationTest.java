@@ -52,8 +52,7 @@ public class ProductIntegrationTest {
 
         // Act
         Product saved = productService.createProduct(dto);
-        Product found = productService.getProductById(saved.getId())
-                .orElseThrow();
+        Product found = productService.getProductById(saved.getId()).orElseThrow();
 
         // Assert
         assertThat(found.getName()).isEqualTo("Test Product");
